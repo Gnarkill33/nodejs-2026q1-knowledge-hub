@@ -3,3 +3,9 @@ export enum UserRole {
   EDITOR = 'editor',
   VIEWER = 'viewer',
 }
+
+export enum ArticleStatus {
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
+  ARCHIVED = 'archived',
+}
