@@ -70,5 +70,11 @@ export class UserService {
     if (!existingUser) throw new NotFoundException('User not found');
 
     db.users = db.users.filter((user) => user.id !== id);
+
+    db.articles = db.articles.map((article) =>
+      article.authorId === id ? { ...article, authorId: null } : article,
+    );
+
+    db.comments = db.comments.filter((comment) => comment.authorId !== id);
   }
 }

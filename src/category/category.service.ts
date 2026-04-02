@@ -47,5 +47,9 @@ export class CategoryService {
     if (!existingCategory) throw new NotFoundException('Category not found');
 
     db.categories = db.categories.filter((category) => category.id !== id);
+
+    db.articles = db.articles.map((article) =>
+      article.categoryId === id ? { ...article, categoryId: null } : article,
+    );
   }
 }

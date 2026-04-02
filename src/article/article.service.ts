@@ -80,5 +80,7 @@ export class ArticleService {
     if (!existingArticle) throw new NotFoundException('Article not found');
 
     db.articles = db.articles.filter((article) => article.id !== id);
+
+    db.comments = db.comments.filter((comment) => comment.articleId !== id);
   }
 }
