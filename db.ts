@@ -1,8 +1,11 @@
 import { randomUUID } from 'crypto';
+import { UserRole, ArticleStatus } from 'src/types';
 
 export const uuid = (): string => randomUUID();
 
 const userIds = Array.from({ length: 8 }, uuid);
+const articleIds = Array.from({ length: 8 }, uuid);
+const categoryIds = Array.from({ length: 8 }, uuid);
 
 export const db = {
   users: [
@@ -10,7 +13,7 @@ export const db = {
       id: userIds[0],
       login: 'John',
       password: 'password1',
-      role: 'admin',
+      role: UserRole.ADMIN,
       createdAt: 1710000000000,
       updatedAt: 1710000000000,
     },
@@ -18,7 +21,7 @@ export const db = {
       id: userIds[1],
       login: 'Jane',
       password: 'password2',
-      role: 'editor',
+      role: UserRole.EDITOR,
       createdAt: 1710000000100,
       updatedAt: 1710000000100,
     },
@@ -26,7 +29,7 @@ export const db = {
       id: userIds[2],
       login: 'Donald',
       password: 'password3',
-      role: 'viewer',
+      role: UserRole.VIEWER,
       createdAt: 1710000000200,
       updatedAt: 1710000000200,
     },
@@ -34,7 +37,7 @@ export const db = {
       id: userIds[3],
       login: 'Alice',
       password: 'password4',
-      role: 'admin',
+      role: UserRole.ADMIN,
       createdAt: 1710000000300,
       updatedAt: 1710000000300,
     },
@@ -42,7 +45,7 @@ export const db = {
       id: userIds[4],
       login: 'Bob',
       password: 'password5',
-      role: 'editor',
+      role: UserRole.EDITOR,
       createdAt: 1710000000400,
       updatedAt: 1710000000400,
     },
@@ -50,7 +53,7 @@ export const db = {
       id: userIds[5],
       login: 'Kate',
       password: 'password6',
-      role: 'viewer',
+      role: UserRole.VIEWER,
       createdAt: 1710000000500,
       updatedAt: 1710000000500,
     },
@@ -58,7 +61,7 @@ export const db = {
       id: userIds[6],
       login: 'Ivan',
       password: 'password7',
-      role: 'admin',
+      role: UserRole.ADMIN,
       createdAt: 1710000000600,
       updatedAt: 1710000000600,
     },
@@ -66,9 +69,107 @@ export const db = {
       id: userIds[7],
       login: 'Olga',
       password: 'password8',
-      role: 'editor',
+      role: UserRole.EDITOR,
       createdAt: 1710000000700,
       updatedAt: 1710000000700,
+    },
+  ],
+  articles: [
+    {
+      id: articleIds[0],
+      title: 'Introduction to TypeScript',
+      content:
+        'TypeScript is a typed superset of JavaScript that compiles to plain JavaScript...',
+      status: ArticleStatus.PUBLISHED,
+      authorId: userIds[0],
+      categoryId: categoryIds[0],
+      tags: ['typescript', 'javascript', 'programming'],
+      createdAt: 1704067200000,
+      updatedAt: 1704153600000,
+    },
+    {
+      id: articleIds[1],
+      title: 'React Hooks Fundamentals',
+      content:
+        'React Hooks allow you to use state and other React features without writing classes...',
+      status: ArticleStatus.PUBLISHED,
+      authorId: userIds[0],
+      categoryId: categoryIds[1],
+      tags: ['react', 'hooks', 'frontend'],
+      createdAt: 1704326400000,
+      updatedAt: 1704412800000,
+    },
+    {
+      id: articleIds[2],
+      title: 'Database Management in Node.js',
+      content:
+        'This article covers connecting and working with PostgreSQL and MongoDB from Node.js applications...',
+      status: ArticleStatus.DRAFT,
+      authorId: userIds[1],
+      categoryId: categoryIds[2],
+      tags: ['nodejs', 'database', 'postgresql', 'mongodb'],
+      createdAt: 1704585600000,
+      updatedAt: 1704672000000,
+    },
+    {
+      id: articleIds[3],
+      title: 'Asynchronous Programming in JavaScript',
+      content:
+        'Promises, async/await, callbacks - exploring all ways to work with asynchronous code...',
+      status: ArticleStatus.PUBLISHED,
+      authorId: userIds[2],
+      categoryId: categoryIds[3],
+      tags: ['javascript', 'async', 'promises'],
+      createdAt: 1704844800000,
+      updatedAt: 1704931200000,
+    },
+    {
+      id: articleIds[4],
+      title: 'Microservices Architecture',
+      content:
+        'Pros and cons of microservices architecture, patterns and antipatterns...',
+      status: ArticleStatus.ARCHIVED,
+      authorId: userIds[3],
+      categoryId: categoryIds[4],
+      tags: ['microservices', 'architecture', 'system-design'],
+      createdAt: 1705104000000,
+      updatedAt: 1705190400000,
+    },
+    {
+      id: articleIds[5],
+      title: 'React Performance Optimization',
+      content:
+        'Tips and techniques for improving React application performance...',
+      status: ArticleStatus.DRAFT,
+      authorId: userIds[0],
+      categoryId: categoryIds[5],
+      tags: ['react', 'performance', 'optimization'],
+      createdAt: 1705363200000,
+      updatedAt: 1705363200000,
+    },
+    {
+      id: articleIds[6],
+      title: 'Docker for Beginners',
+      content:
+        'Step-by-step guide to containerizing applications with Docker...',
+      status: ArticleStatus.PUBLISHED,
+      authorId: userIds[4],
+      categoryId: categoryIds[6],
+      tags: ['docker', 'devops', 'containers'],
+      createdAt: 1705622400000,
+      updatedAt: 1705708800000,
+    },
+    {
+      id: articleIds[7],
+      title: 'Testing NestJS Applications',
+      content:
+        'Unit tests, e2e tests, and integration testing in the NestJS ecosystem...',
+      status: ArticleStatus.DRAFT,
+      authorId: userIds[5],
+      categoryId: categoryIds[7],
+      tags: ['nestjs', 'testing', 'jest'],
+      createdAt: 1705881600000,
+      updatedAt: 1705968000000,
     },
   ],
 };
