@@ -106,7 +106,7 @@ export const db = {
         'This article covers connecting and working with PostgreSQL and MongoDB from Node.js applications...',
       status: ArticleStatus.DRAFT,
       authorId: userIds[1],
-      categoryId: categoryIds[2],
+      categoryId: categoryIds[4],
       tags: ['nodejs', 'database', 'postgresql', 'mongodb'],
       createdAt: 1704585600000,
       updatedAt: 1704672000000,
@@ -118,7 +118,7 @@ export const db = {
         'Promises, async/await, callbacks - exploring all ways to work with asynchronous code...',
       status: ArticleStatus.PUBLISHED,
       authorId: userIds[2],
-      categoryId: categoryIds[3],
+      categoryId: categoryIds[0],
       tags: ['javascript', 'async', 'promises'],
       createdAt: 1704844800000,
       updatedAt: 1704931200000,
@@ -130,7 +130,7 @@ export const db = {
         'Pros and cons of microservices architecture, patterns and antipatterns...',
       status: ArticleStatus.ARCHIVED,
       authorId: userIds[3],
-      categoryId: categoryIds[4],
+      categoryId: categoryIds[7],
       tags: ['microservices', 'architecture', 'system-design'],
       createdAt: 1705104000000,
       updatedAt: 1705190400000,
@@ -142,7 +142,7 @@ export const db = {
         'Tips and techniques for improving React application performance...',
       status: ArticleStatus.DRAFT,
       authorId: userIds[0],
-      categoryId: categoryIds[5],
+      categoryId: categoryIds[1],
       tags: ['react', 'performance', 'optimization'],
       createdAt: 1705363200000,
       updatedAt: 1705363200000,
@@ -154,7 +154,7 @@ export const db = {
         'Step-by-step guide to containerizing applications with Docker...',
       status: ArticleStatus.PUBLISHED,
       authorId: userIds[4],
-      categoryId: categoryIds[6],
+      categoryId: categoryIds[3],
       tags: ['docker', 'devops', 'containers'],
       createdAt: 1705622400000,
       updatedAt: 1705708800000,
@@ -166,10 +166,60 @@ export const db = {
         'Unit tests, e2e tests, and integration testing in the NestJS ecosystem...',
       status: ArticleStatus.DRAFT,
       authorId: userIds[5],
-      categoryId: categoryIds[7],
+      categoryId: categoryIds[6],
       tags: ['nestjs', 'testing', 'jest'],
       createdAt: 1705881600000,
       updatedAt: 1705968000000,
+    },
+  ],
+  categories: [
+    {
+      id: categoryIds[0],
+      name: 'Programming',
+      description:
+        'Articles about software development, programming languages, and coding best practices',
+    },
+    {
+      id: categoryIds[1],
+      name: 'Frontend',
+      description:
+        'Web development, React, Vue, Angular, and modern frontend technologies',
+    },
+    {
+      id: categoryIds[2],
+      name: 'Backend',
+      description:
+        'Server-side development, APIs, databases, and backend architecture',
+    },
+    {
+      id: categoryIds[3],
+      name: 'DevOps',
+      description:
+        'CI/CD, Docker, Kubernetes, cloud computing, and infrastructure automation',
+    },
+    {
+      id: categoryIds[4],
+      name: 'Database',
+      description:
+        'SQL, NoSQL, data modeling, optimization, and database management',
+    },
+    {
+      id: categoryIds[5],
+      name: 'Security',
+      description:
+        'Cybersecurity, authentication, encryption, and secure coding practices',
+    },
+    {
+      id: categoryIds[6],
+      name: 'Testing',
+      description:
+        'Unit testing, integration testing, E2E testing, and quality assurance',
+    },
+    {
+      id: categoryIds[7],
+      name: 'Architecture',
+      description:
+        'System design, microservices, design patterns, and software architecture',
     },
   ],
 };
