@@ -6,6 +6,7 @@ export const uuid = (): string => randomUUID();
 const userIds = Array.from({ length: 8 }, uuid);
 const articleIds = Array.from({ length: 8 }, uuid);
 const categoryIds = Array.from({ length: 8 }, uuid);
+const commentIds = Array.from({ length: 12 }, uuid);
 
 export const db = {
   users: [
@@ -220,6 +221,94 @@ export const db = {
       name: 'Architecture',
       description:
         'System design, microservices, design patterns, and software architecture',
+    },
+  ],
+  comments: [
+    {
+      id: commentIds[0],
+      content:
+        'Great article! TypeScript really improves JavaScript development.',
+      articleId: articleIds[0],
+      authorId: userIds[2],
+      createdAt: 1704100000000,
+    },
+    {
+      id: commentIds[1],
+      content: 'Thanks for the detailed explanation of hooks!',
+      articleId: articleIds[1],
+      authorId: userIds[1],
+      createdAt: 1704350000000,
+    },
+    {
+      id: commentIds[2],
+      content: 'Could you also cover MongoDB aggregation pipeline?',
+      articleId: articleIds[2],
+      authorId: userIds[4],
+      createdAt: 1704600000000,
+    },
+    {
+      id: commentIds[3],
+      content: 'Async/await is so much better than callbacks!',
+      articleId: articleIds[3],
+      authorId: userIds[3],
+      createdAt: 1704880000000,
+    },
+    {
+      id: commentIds[4],
+      content:
+        "Microservices aren't always the answer. Great balanced article!",
+      articleId: articleIds[4],
+      authorId: userIds[1],
+      createdAt: 1705150000000,
+    },
+    {
+      id: commentIds[5],
+      content: "I didn't know about useMemo, thanks for sharing!",
+      articleId: articleIds[5],
+      authorId: userIds[5],
+      createdAt: 1705400000000,
+    },
+    {
+      id: commentIds[6],
+      content: 'Docker changed my development workflow completely.',
+      articleId: articleIds[6],
+      authorId: userIds[2],
+      createdAt: 1705650000000,
+    },
+    {
+      id: commentIds[7],
+      content: 'What about E2E tests with Cypress?',
+      articleId: articleIds[7],
+      authorId: userIds[1],
+      createdAt: 1705900000000,
+    },
+    {
+      id: commentIds[8],
+      content: 'This helped me fix my TypeScript config, thanks!',
+      articleId: articleIds[0],
+      authorId: userIds[6],
+      createdAt: 1704200000000,
+    },
+    {
+      id: commentIds[9],
+      content: 'Looking forward to more articles about React performance!',
+      articleId: articleIds[5],
+      authorId: null,
+      createdAt: 1705450000000,
+    },
+    {
+      id: commentIds[10],
+      content: 'Is Docker better than Podman for local development?',
+      articleId: articleIds[6],
+      authorId: userIds[3],
+      createdAt: 1705700000000,
+    },
+    {
+      id: commentIds[11],
+      content: 'Nice explanation of microservices vs monolith!',
+      articleId: articleIds[4],
+      authorId: userIds[4],
+      createdAt: 1705200000000,
     },
   ],
 };
