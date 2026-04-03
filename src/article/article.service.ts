@@ -67,7 +67,7 @@ export class ArticleService {
       updatedAt: Date.now(),
     };
 
-    db.articles.map((article) =>
+    db.articles = db.articles.map((article) =>
       article.id !== id ? article : updatedArticle,
     );
 
