@@ -33,6 +33,16 @@ export class CommentService {
     return db.comments.filter((comment) => comment.articleId === articleId);
   }
 
+  findOne(id: string) {
+    const comment = db.comments.find((comment) => comment.id === id);
+
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    return comment;
+  }
+
   remove(id: string) {
     const existingComment = db.comments.find((comment) => comment.id === id);
 

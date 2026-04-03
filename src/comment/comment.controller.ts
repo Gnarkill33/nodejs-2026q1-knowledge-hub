@@ -28,6 +28,11 @@ export class CommentController {
     return this.commentService.findAll(query.articleId);
   }
 
+  @Get('/:id')
+  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.commentService.findOne(id);
+  }
+
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', new ParseUUIDPipe()) id: string) {
