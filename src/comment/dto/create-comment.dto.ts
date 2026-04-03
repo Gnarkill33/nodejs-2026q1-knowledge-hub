@@ -6,7 +6,7 @@ export class CreateCommentDto {
   content: string;
 
   @IsNotEmpty({ message: 'Article ID is required' })
-  // @IsUUID()
+  @IsUUID()
   articleId: string;
 
   @IsOptional()
