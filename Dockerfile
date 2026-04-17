@@ -25,7 +25,10 @@ RUN addgroup -g 1001 customuser && \
 
 COPY package*.json ./
 
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev && npm cache clean --force
+
+COPY --from=builder /app/prisma ./prisma
+RUN npx prisma generate
 
 COPY --from=builder --chown=customuser:customuser /app/dist ./dist
 COPY --from=builder --chown=customuser:customuser /app/doc ./doc
