@@ -35,6 +35,6 @@ COPY --from=builder --chown=customuser:customuser /app/doc ./doc
 
 USER customuser
 
-EXPOSE 3000
+EXPOSE 4000
 
 CMD ["node", "dist/src/main.js"]
