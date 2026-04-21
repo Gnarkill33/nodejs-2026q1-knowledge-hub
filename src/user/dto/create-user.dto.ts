@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-import { UserRole } from 'src/types';
+import { Transform } from 'class-transformer';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Role } from 'src/generated/prisma/client';
 
 export class CreateUserDto {
   @IsString()
@@ -10,5 +11,8 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'Password is required' })
   password: string;
 
-  role?: UserRole;
+  @IsOptional()
+  @Transform(({ value }) => value?.toUpperCase())
+  @IsEnum(Role)
+  role?: Role;
 }
