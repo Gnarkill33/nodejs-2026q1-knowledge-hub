@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { UserRole } from 'src/types';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class UserService {
       data: {
         login: dto.login,
         password: dto.password,
-        role: dto.role || UserRole.VIEWER,
+        role: dto.role,
       },
     });
 
