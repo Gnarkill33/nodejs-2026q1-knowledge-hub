@@ -25,7 +25,7 @@ export class CommentService {
       data: { articleId: dto.articleId, content: dto.content },
     });
 
-    return newComment;
+    return { ...newComment, createdAt: newComment.createdAt?.getTime() };
   }
 
   async findAll(query: GetCommentsQueryDto) {
