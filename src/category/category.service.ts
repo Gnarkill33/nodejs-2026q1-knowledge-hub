@@ -1,55 +1,58 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { db, uuid } from 'db';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class CategoryService {
-  create(dto: CreateCategoryDto) {
-    const newCategory = {
-      id: uuid(),
-      ...dto,
-    };
+  constructor(private prisma: PrismaService) {}
 
-    db.categories.push(newCategory);
+  async create(dto: CreateCategoryDto) {
+    const newCategory = await this.prisma.category.create({
+      data: { name: dto.name, description: dto.description },
+    });
 
     return newCategory;
   }
 
-  findAll() {
-    return db.categories;
+  async findAll() {
+    return await this.prisma.category.findMany();
   }
 
-  findOne(id: string) {
-    const category = db.categories.find((category) => category.id === id);
-
-    if (!category) throw new NotFoundException('Category not found');
-
-    return category;
-  }
-
-  update(id: string, dto: CreateCategoryDto) {
-    const existingCategory = this.findOne(id);
+  async findOne(id: string) {
+    const existingCategory = await this.prisma.category.findUnique({
+      where: { id },
+    });
 
     if (!existingCategory) throw new NotFoundException('Category not found');
 
-    const updatedCategory = { ...existingCategory, ...dto };
+    return existingCategory;
+  }
 
-    db.categories = db.categories.map((category) =>
-      category.id !== id ? category : updatedCategory,
-    );
+  async update(id: string, dto: CreateCategoryDto) {
+    const existingCategory = await this.prisma.category.findUnique({
+      where: { id },
+    });
+
+    if (!existingCategory) throw new NotFoundException('Category not found');
+
+    const updatedCategory = await this.prisma.category.update({
+      where: { id },
+      data: {
+        name: dto.name,
+        description: dto.description,
+      },
+    });
 
     return updatedCategory;
   }
 
-  remove(id: string) {
-    const existingCategory = this.findOne(id);
+  async remove(id: string) {
+    const existingCategory = await this.prisma.category.findUnique({
+      where: { id },
+    });
 
     if (!existingCategory) throw new NotFoundException('Category not found');
 
-    db.categories = db.categories.filter((category) => category.id !== id);
-
-    db.articles = db.articles.map((article) =>
-      article.categoryId === id ? { ...article, categoryId: null } : article,
-    );
+    await this.prisma.category.delete({ where: { id } });
   }
 }
