@@ -70,10 +70,6 @@ export class ArticleService {
       }),
     );
 
-    console.log(
-      'First article in response:',
-      JSON.stringify(filteredArticlesWithNormalizedTags[0], null, 2),
-    );
     return filteredArticlesWithNormalizedTags;
   }
 
