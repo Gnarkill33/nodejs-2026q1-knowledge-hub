@@ -1,12 +1,13 @@
+import { Transform } from 'class-transformer';
 import {
   IsArray,
-  IsIn,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
-import { ArticleStatus } from 'src/types';
+import { Status } from 'src/generated/prisma/client';
 
 export class CreateArticleDto {
   @IsNotEmpty({ message: 'Article title is required' })
@@ -18,13 +19,11 @@ export class CreateArticleDto {
   content: string;
 
   @IsOptional()
-  @IsIn(
-    [ArticleStatus.ARCHIVED, ArticleStatus.DRAFT, ArticleStatus.PUBLISHED],
-    {
-      message: 'Status must be draft, published, or archived',
-    },
-  )
-  status?: ArticleStatus;
+  @Transform(({ value }) => value?.toUpperCase())
+  @IsEnum(Status, {
+    message: 'Status must be draft, published, or archived',
+  })
+  status?: Status = Status.DRAFT;
 
   @IsOptional()
   @IsUUID()

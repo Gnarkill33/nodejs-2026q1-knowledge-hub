@@ -13,10 +13,33 @@ export class ArticleService {
         title: dto.title,
         content: dto.content,
         status: dto.status,
+        authorId: dto.authorId,
+        categoryId: dto.categoryId,
+        tags: {
+          connectOrCreate:
+            dto.tags?.map((name) => ({
+              where: { name },
+              create: { name },
+            })) || [],
+        },
+      },
+      include: {
+        tags: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
-    return newArticle;
+    const newArticleLowerCase = {
+      ...newArticle,
+      status: newArticle.status.toLowerCase(),
+      createdAt: newArticle.createdAt.getTime(),
+      updatedAt: newArticle.updatedAt.getTime(),
+    };
+
+    return newArticleLowerCase;
   }
 
   async findAll(query: GetArticlesQueryDto) {
@@ -40,29 +63,43 @@ export class ArticleService {
     const filteredArticlesWithNormalizedTags = filteredArticles.map(
       (article) => ({
         ...article,
+        status: article.status?.toLowerCase(),
+        createdAt: article.createdAt?.getTime(),
+        updatedAt: article.updatedAt?.getTime(),
         tags: article.tags.map((tag) => tag.name),
       }),
     );
 
+    console.log(
+      'First article in response:',
+      JSON.stringify(filteredArticlesWithNormalizedTags[0], null, 2),
+    );
     return filteredArticlesWithNormalizedTags;
   }
 
   async findOne(id: string) {
     const existingArticle = await this.prisma.article.findUnique({
       where: { id },
+      include: {
+        tags: { select: { name: true } },
+      },
     });
 
     if (!existingArticle) {
       throw new NotFoundException('Article not found');
     }
 
-    return existingArticle;
+    const existingArticleLowerCase = {
+      ...existingArticle,
+      status: existingArticle.status.toLowerCase(),
+      tags: existingArticle.tags?.map((tag) => tag.name) || [],
+    };
+
+    return existingArticleLowerCase;
   }
 
   async update(id: string, dto: CreateArticleDto) {
-    const existingArticle = await this.prisma.article.findUnique({
-      where: { id },
-    });
+    const existingArticle = await this.findOne(id);
 
     if (!existingArticle) throw new NotFoundException('Article not found');
 
@@ -100,9 +137,7 @@ export class ArticleService {
   }
 
   async remove(id: string) {
-    const existingArticle = await this.prisma.article.findUnique({
-      where: { id },
-    });
+    const existingArticle = await this.findOne(id);
 
     if (!existingArticle) throw new NotFoundException('Article not found');
 
