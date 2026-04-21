@@ -20,7 +20,13 @@ export class UserService {
       },
     });
 
-    const newUserNoPassword = { ...newUser };
+    const newUserNoPassword = {
+      ...newUser,
+      role: newUser.role?.toLowerCase(),
+      createdAt: newUser.createdAt.getTime(),
+      updatedAt: newUser.updatedAt.getTime(),
+    };
+
     delete newUserNoPassword.password;
 
     return newUserNoPassword;
@@ -35,14 +41,19 @@ export class UserService {
 
     if (!existingUser) throw new NotFoundException('User not found');
 
-    const existingUserNoPassword = { ...existingUser };
+    const existingUserNoPassword = {
+      ...existingUser,
+      createdAt: existingUser.createdAt?.getTime(),
+      updatedAt: existingUser.updatedAt?.getTime(),
+    };
+
     delete existingUser.password;
 
     return existingUserNoPassword;
   }
 
   async update(id: string, dto: UpdatePasswordDto) {
-    const existingUser = await this.prisma.user.findUnique({ where: { id } });
+    const existingUser = await this.findOne(id);
 
     if (!existingUser) throw new NotFoundException('User not found');
 
@@ -54,14 +65,18 @@ export class UserService {
       data: { password: dto.newPassword },
     });
 
-    const updatedUserNoPassword = { ...updatedUser };
+    const updatedUserNoPassword = {
+      ...updatedUser,
+      createdAt: updatedUser.createdAt?.getTime(),
+      updatedAt: updatedUser.updatedAt?.getTime(),
+    };
     delete updatedUserNoPassword.password;
 
     return updatedUserNoPassword;
   }
 
   async remove(id: string) {
-    const existingUser = await this.prisma.user.findUnique({ where: { id } });
+    const existingUser = await this.findOne(id);
     if (!existingUser) throw new NotFoundException('User not found');
 
     await this.prisma.user.delete({ where: { id } });
