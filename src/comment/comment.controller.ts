@@ -25,7 +25,7 @@ export class CommentController {
 
   @Get()
   findAll(@Query() query: GetCommentsQueryDto) {
-    return this.commentService.findAll(query.articleId);
+    return this.commentService.findAll(query);
   }
 
   @Get('/:id')

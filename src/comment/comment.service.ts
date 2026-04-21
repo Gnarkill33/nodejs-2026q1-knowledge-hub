@@ -4,50 +4,55 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { db, uuid } from 'db';
+import { PrismaService } from 'src/prisma.service';
+import { GetCommentsQueryDto } from './dto/get-comments-query.dto';
 
 @Injectable()
 export class CommentService {
-  create(dto: CreateCommentDto) {
-    const existingArticle = db.articles.find(
-      (article) => article.id === dto.articleId,
-    );
+  constructor(private prisma: PrismaService) {}
+
+  async create(dto: CreateCommentDto) {
+    const existingArticle = await this.prisma.article.findUnique({
+      where: { id: dto.articleId },
+    });
 
     if (!existingArticle)
       throw new UnprocessableEntityException(
         "Article with this ID doesn't exist",
       );
 
-    const newComment = {
-      id: uuid(),
-      ...dto,
-      createdAt: Date.now(),
-    };
-
-    db.comments.push(newComment);
+    const newComment = await this.prisma.comment.create({
+      data: { articleId: dto.articleId, content: dto.content },
+    });
 
     return newComment;
   }
 
-  findAll(articleId: string) {
-    return db.comments.filter((comment) => comment.articleId === articleId);
+  async findAll(query: GetCommentsQueryDto) {
+    const { articleId } = query;
+
+    return await this.prisma.comment.findMany({ where: { articleId } });
   }
 
-  findOne(id: string) {
-    const comment = db.comments.find((comment) => comment.id === id);
+  async findOne(id: string) {
+    const existingComment = await this.prisma.comment.findUnique({
+      where: { id },
+    });
 
-    if (!comment) {
+    if (!existingComment) {
       throw new NotFoundException('Comment not found');
     }
 
-    return comment;
+    return existingComment;
   }
 
-  remove(id: string) {
-    const existingComment = db.comments.find((comment) => comment.id === id);
+  async remove(id: string) {
+    const existingComment = await this.prisma.comment.findUnique({
+      where: { id },
+    });
 
     if (!existingComment) throw new NotFoundException('Comment not found');
 
-    db.comments = db.comments.filter((comment) => comment.id !== id);
+    await this.prisma.comment.delete({ where: { id } });
   }
 }
