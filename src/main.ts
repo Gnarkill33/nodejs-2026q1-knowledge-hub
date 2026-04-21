@@ -11,7 +11,7 @@ import * as yaml from 'js-yaml';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const filePath = join(process.cwd(), 'doc', 'api.yaml');
   const yamlFile = readFileSync(filePath, 'utf8');
