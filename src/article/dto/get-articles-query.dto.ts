@@ -1,10 +1,12 @@
-import { IsOptional, IsString } from 'class-validator';
-import { ArticleStatus } from 'src/types';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { Status } from 'src/generated/prisma/client';
+import { Transform } from 'class-transformer';
 
 export class GetArticlesQueryDto {
   @IsOptional()
-  @IsString()
-  status?: ArticleStatus;
+  @Transform(({ value }) => value?.toUpperCase())
+  @IsEnum(Status)
+  status?: Status;
 
   @IsOptional()
   @IsString()

@@ -1,86 +1,111 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { db, uuid } from 'db';
 import { GetArticlesQueryDto } from './dto/get-articles-query.dto';
-import { ArticleStatus } from 'src/types';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class ArticleService {
-  create(dto: CreateArticleDto) {
-    const newArticle = {
-      id: uuid(),
-      ...dto,
-      status: dto.status || ArticleStatus.DRAFT,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
+  constructor(private prisma: PrismaService) {}
 
-    db.articles.push(newArticle);
+  async create(dto: CreateArticleDto) {
+    const newArticle = await this.prisma.article.create({
+      data: {
+        title: dto.title,
+        content: dto.content,
+        status: dto.status,
+      },
+    });
 
     return newArticle;
   }
 
-  findAll(query: GetArticlesQueryDto) {
+  async findAll(query: GetArticlesQueryDto) {
     const { status, categoryId, tag } = query;
 
-    let filteredArticles = [...db.articles];
+    const filteredArticles = await this.prisma.article.findMany({
+      where: {
+        ...(status && { status }),
+        ...(categoryId && { categoryId }),
+        ...(tag && { tags: { some: { name: tag } } }),
+      },
+      include: {
+        tags: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
 
-    if (status) {
-      filteredArticles = filteredArticles.filter(
-        (article) => article.status === status,
-      );
-    }
+    const filteredArticlesWithNormalizedTags = filteredArticles.map(
+      (article) => ({
+        ...article,
+        tags: article.tags.map((tag) => tag.name),
+      }),
+    );
 
-    if (categoryId) {
-      filteredArticles = filteredArticles.filter(
-        (article) => article.categoryId === categoryId,
-      );
-    }
-
-    if (tag) {
-      filteredArticles = filteredArticles.filter((article) =>
-        article.tags.includes(tag),
-      );
-    }
-
-    return filteredArticles;
+    return filteredArticlesWithNormalizedTags;
   }
 
-  findOne(id: string) {
-    const article = db.articles.find((article) => article.id === id);
+  async findOne(id: string) {
+    const existingArticle = await this.prisma.article.findUnique({
+      where: { id },
+    });
 
-    if (!article) {
+    if (!existingArticle) {
       throw new NotFoundException('Article not found');
     }
 
-    return article;
+    return existingArticle;
   }
 
-  update(id: string, dto: CreateArticleDto) {
-    const existingArticle = this.findOne(id);
+  async update(id: string, dto: CreateArticleDto) {
+    const existingArticle = await this.prisma.article.findUnique({
+      where: { id },
+    });
 
     if (!existingArticle) throw new NotFoundException('Article not found');
 
-    const updatedArticle = {
-      ...existingArticle,
-      ...dto,
-      updatedAt: Date.now(),
+    const updatedArticle = await this.prisma.article.update({
+      where: { id },
+      data: {
+        title: dto.title,
+        content: dto.content,
+        status: dto.status,
+        authorId: dto.authorId,
+        categoryId: dto.categoryId,
+        tags: {
+          connectOrCreate:
+            dto.tags?.map((name) => ({
+              where: { name },
+              create: { name },
+            })) || [],
+        },
+      },
+      include: {
+        tags: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    const updatedArticlesWithNormalizedTags = {
+      ...updatedArticle,
+      tags: updatedArticle.tags.map((tag) => tag.name),
     };
 
-    db.articles = db.articles.map((article) =>
-      article.id !== id ? article : updatedArticle,
-    );
-
-    return updatedArticle;
+    return updatedArticlesWithNormalizedTags;
   }
 
-  remove(id: string) {
-    const existingArticle = this.findOne(id);
+  async remove(id: string) {
+    const existingArticle = await this.prisma.article.findUnique({
+      where: { id },
+    });
 
     if (!existingArticle) throw new NotFoundException('Article not found');
 
-    db.articles = db.articles.filter((article) => article.id !== id);
-
-    db.comments = db.comments.filter((comment) => comment.articleId !== id);
+    await this.prisma.article.delete({ where: { id } });
   }
 }
