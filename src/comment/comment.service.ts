@@ -47,9 +47,7 @@ export class CommentService {
   }
 
   async remove(id: string) {
-    const existingComment = await this.prisma.comment.findUnique({
-      where: { id },
-    });
+    const existingComment = await this.findOne(id);
 
     if (!existingComment) throw new NotFoundException('Comment not found');
 
