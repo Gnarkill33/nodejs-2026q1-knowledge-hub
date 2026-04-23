@@ -92,7 +92,7 @@ export class AuthService {
       { userId: userPayload.id },
       {
         secret: process.env.JWT_SECRET_REFRESH_KEY,
-        expiresIn: '7d',
+        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
       },
     );
 
