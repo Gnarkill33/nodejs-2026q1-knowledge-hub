@@ -2,12 +2,14 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import 'dotenv/config';
 import { JwtService } from '@nestjs/jwt';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -95,5 +97,34 @@ export class AuthService {
     );
 
     return refreshToken;
+  }
+
+  async refresh(dto: RefreshTokenDto) {
+    const { refreshToken } = dto;
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('No refresh token');
+    }
+
+    try {
+      const decoded = await this.jwt.verifyAsync(refreshToken, {
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+      });
+
+      const existingUser = await this.prisma.user.findUnique({
+        where: { id: decoded.userId },
+      });
+
+      if (!existingUser) {
+        throw new ForbiddenException('User not found');
+      }
+
+      const newAccessToken = await this.getAccessToken(existingUser);
+      const newRefreshToken = await this.getRefreshToken(decoded.userId);
+
+      return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+    } catch {
+      throw new ForbiddenException('Refresh token is invalid or expired');
+    }
   }
 }
