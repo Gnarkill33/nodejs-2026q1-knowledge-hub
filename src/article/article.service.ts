@@ -1,13 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { GetArticlesQueryDto } from './dto/get-articles-query.dto';
 import { PrismaService } from 'src/prisma.service';
+import { UserRole } from 'src/types';
+import { Request } from 'express';
 
 @Injectable()
 export class ArticleService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateArticleDto) {
+  async create(dto: CreateArticleDto, req: Request) {
+    const currentUser = req['user'];
+    const isAdmin = currentUser.role === UserRole.ADMIN;
+    const isSelf = currentUser.id === dto.authorId;
+
+    if (!isAdmin && !isSelf) {
+      throw new ForbiddenException('Access denied');
+    }
+
     const newArticle = await this.prisma.article.create({
       data: {
         title: dto.title,
@@ -94,7 +108,15 @@ export class ArticleService {
     return existingArticleLowerCase;
   }
 
-  async update(id: string, dto: CreateArticleDto) {
+  async update(id: string, dto: CreateArticleDto, req: Request) {
+    const currentUser = req['user'];
+    const isAdmin = currentUser.role === UserRole.ADMIN;
+    const isSelf = currentUser.id === dto.authorId;
+
+    if (!isAdmin && !isSelf) {
+      throw new ForbiddenException('Access denied');
+    }
+
     const existingArticle = await this.findOne(id);
 
     if (!existingArticle) throw new NotFoundException('Article not found');
