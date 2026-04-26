@@ -6,6 +6,8 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { PrismaService } from 'src/prisma.service';
+import { Request } from 'express';
+import { UserRole } from 'src/types';
 
 @Injectable()
 export class UserService {
@@ -52,8 +54,16 @@ export class UserService {
     return existingUserNoPassword;
   }
 
-  async update(id: string, dto: UpdatePasswordDto) {
+  async update(id: string, dto: UpdatePasswordDto, req: Request) {
+    const currentUser = req['user'];
     const existingUser = await this.findOne(id);
+
+    const isAdmin = currentUser.role === UserRole.ADMIN;
+    const isSelf = currentUser.id === id;
+
+    if (!isAdmin && !isSelf) {
+      throw new ForbiddenException('Access denied');
+    }
 
     if (!existingUser) throw new NotFoundException('User not found');
 
