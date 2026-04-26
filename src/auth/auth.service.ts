@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import 'dotenv/config';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { JwtPayload } from 'src/types';
 
 @Injectable()
 export class AuthService {
@@ -76,7 +77,7 @@ export class AuthService {
     login: string;
     role: string;
   }) {
-    const payload = {
+    const payload: JwtPayload = {
       userId: userPayload.id,
       login: userPayload.login,
       role: userPayload.role,
