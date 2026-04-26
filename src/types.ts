@@ -9,3 +9,8 @@ export enum ArticleStatus {
   PUBLISHED = 'published',
   ARCHIVED = 'archived',
 }
+export interface JwtPayload {
+  userId: string;
+  login: string;
+  role: string;
+}
