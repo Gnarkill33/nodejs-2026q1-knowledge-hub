@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -6,12 +7,22 @@ import {
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { PrismaService } from 'src/prisma.service';
 import { GetCommentsQueryDto } from './dto/get-comments-query.dto';
+import { Request } from 'express';
+import { UserRole } from 'src/types';
 
 @Injectable()
 export class CommentService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateCommentDto) {
+  async create(dto: CreateCommentDto, req: Request) {
+    const currentUser = req['user'];
+    const isAdmin = currentUser.role === UserRole.ADMIN;
+    const isSelf = currentUser.id === dto.authorId;
+
+    if (!isAdmin && !isSelf) {
+      throw new ForbiddenException('Access denied');
+    }
+
     const existingArticle = await this.prisma.article.findUnique({
       where: { id: dto.articleId },
     });
